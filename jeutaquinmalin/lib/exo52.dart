@@ -27,9 +27,12 @@ class _GenerateTile extends State<GenerateTile> {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-            width: 500.0,
-            height: 500.0,
+          /*Container(
+            child:*/
+          Align(
+            alignment: Alignment.center,
+            widthFactor: 0.3,
+            heightFactor: 0.3,
             child: GridView.count(
               primary: false,
               padding: const EdgeInsets.all(10),
@@ -61,10 +64,13 @@ class _GenerateTile extends State<GenerateTile> {
               ],
             ),
           ),
+          //),
           Slider(
               value: taille,
-              min: 0.0,
+              min: 2.0,
               max: 7.0,
+              divisions: 7,
+              label: taille.round().toString(),
               onChanged: (double t) {
                 setState(() {
                   taille = t;
