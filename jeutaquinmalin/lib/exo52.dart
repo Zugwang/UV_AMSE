@@ -72,13 +72,13 @@ class _GenerateTile extends State<GenerateTile> {
             child:*/
           Align(
             alignment: Alignment.center,
-            widthFactor: 0.3,
-            heightFactor: 0.3,
+            widthFactor: 1,
+            heightFactor: 1,
             child: GridView.count(
                 primary: false,
                 padding: const EdgeInsets.all(10),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                crossAxisSpacing: 5,
+                mainAxisSpacing: 5,
                 shrinkWrap: true,
                 crossAxisCount: taille.toInt(),
                 children: generateCroppedTileList(taille.toInt())),
@@ -86,8 +86,8 @@ class _GenerateTile extends State<GenerateTile> {
           Slider(
               value: taille,
               min: 2.0,
-              max: 7.0,
-              divisions: 7,
+              max: 8.0,
+              divisions: 6,
               label: taille.round().toString(),
               onChanged: (double t) {
                 setState(() {
