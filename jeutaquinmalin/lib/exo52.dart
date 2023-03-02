@@ -14,13 +14,54 @@ class DisplayImageWidget extends StatelessWidget {
   }
 }
 
+class _ImageTile {
+  String tileName;
+  Alignment alignment;
+
+  _ImageTile({this.tileName = 'poisson_bleu.jpg', required this.alignment});
+
+  Widget croppedImageTile(int taille) {
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: ClipRect(
+        child: Container(
+          child: Align(
+            alignment: this.alignment,
+            widthFactor: 1 / taille,
+            heightFactor: 1 / taille,
+            child: Image.asset('assets/images/' + this.tileName),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+List<Widget> generateCroppedTileList(int taille) {
+  List<Widget> l = [];
+
+  for (var y = 1; y < taille + 1; y++) {
+    for (var x = 1; x < taille + 1; x++) {
+      double Align_x = (((x - 1) * (2)) / (taille - 1)) - 1;
+      double Align_y = (((y - 1) * (2)) / (taille - 1)) - 1;
+
+      l.add(Padding(
+          padding: EdgeInsets.all(0.4),
+          child: _ImageTile(alignment: Alignment(Align_x, Align_y))
+              .croppedImageTile(taille)));
+    }
+  }
+
+  return l;
+}
+
 class GenerateTile extends StatefulWidget {
   @override
   _GenerateTile createState() => _GenerateTile();
 }
 
 class _GenerateTile extends State<GenerateTile> {
-  double taille = 2.0;
+  double taille = 3.0;
 
   @override
   Widget build(BuildContext context) {
@@ -34,37 +75,14 @@ class _GenerateTile extends State<GenerateTile> {
             widthFactor: 0.3,
             heightFactor: 0.3,
             child: GridView.count(
-              primary: false,
-              padding: const EdgeInsets.all(10),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              shrinkWrap: true,
-              crossAxisCount: 2, //taille.toInt(),
-              children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.amber[600],
-                  child: const Text("He'd have you all unravel at the"),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Color.fromARGB(255, 196, 223, 178),
-                  child: const Text("He'd have you all unravel at the"),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Color.fromARGB(255, 195, 69, 11),
-                  child: const Text('Heed not the rabble'),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: Colors.teal[300],
-                  child: const Text('Sound of screams but the'),
-                ),
-              ],
-            ),
+                primary: false,
+                padding: const EdgeInsets.all(10),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                shrinkWrap: true,
+                crossAxisCount: taille.toInt(),
+                children: generateCroppedTileList(taille.toInt())),
           ),
-          //),
           Slider(
               value: taille,
               min: 2.0,

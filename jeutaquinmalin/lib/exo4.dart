@@ -5,7 +5,7 @@ class Tile {
   Alignment alignment;
 
   Tile(
-      {this.imageURL = 'https://picsum.photos/512',
+      {this.imageURL = 'assets/images/poisson_bleu.jpg',
       this.alignment = Alignment.center});
 
   Widget croppedImageTile() {
@@ -15,8 +15,8 @@ class Tile {
         child: Container(
           child: Align(
             alignment: this.alignment,
-            widthFactor: 0.3,
-            heightFactor: 0.3,
+            widthFactor: 0.5,
+            heightFactor: 0.5,
             child: Image.network(this.imageURL),
           ),
         ),
@@ -25,8 +25,8 @@ class Tile {
   }
 }
 
-Tile tile =
-    new Tile(imageURL: 'https://picsum.photos/512', alignment: Alignment(0, 0));
+Tile tile = new Tile(
+    imageURL: 'assets/images/poisson_bleu.jpg', alignment: Alignment(0, 0));
 
 class DisplayTileWidget extends StatelessWidget {
   @override
@@ -46,8 +46,8 @@ class DisplayTileWidget extends StatelessWidget {
                 child: this.createTileWidgetFrom(tile))),
         Container(
             height: 200,
-            child:
-                Image.network('https://picsum.photos/512', fit: BoxFit.cover))
+            child: Image.network('assets/images/poisson_bleu.jpg',
+                fit: BoxFit.cover))
       ])),
     );
   }
