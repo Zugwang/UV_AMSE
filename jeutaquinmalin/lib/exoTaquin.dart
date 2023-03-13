@@ -28,7 +28,7 @@ class Tile {
 }
 
 class TileWidget extends StatelessWidget {
-  final Tile tile;
+  late final Tile tile;
   int tileWidgetPos = 0;
   bool isBlank = false;
 
@@ -37,8 +37,8 @@ class TileWidget extends StatelessWidget {
     isBlank = blank;
   }
 
-  void setBlank() {
-    isBlank = true;
+  void setBlank(bool val) {
+    isBlank = val;
   }
 
   @override
@@ -71,8 +71,8 @@ class TileWidget extends StatelessWidget {
   }
 }
 
-List<Widget> generateCroppedTileList(int taille) {
-  List<Widget> l = [];
+List<TileWidget> generateCroppedTileList(int taille) {
+  List<TileWidget> l = [];
   int newID = 1;
 
   for (var y = 1; y < taille + 1; y++) {
@@ -89,13 +89,11 @@ List<Widget> generateCroppedTileList(int taille) {
         image: 'poisson_bleu.jpg',
         firstPos: newID,
       );
-      l.add(Padding(
-          padding: EdgeInsets.all(0.4),
-          child: TileWidget(
-            tile: newTile,
-            tileWPos: newID,
-            blank: blank,
-          )));
+      l.add(TileWidget(
+        tile: newTile,
+        tileWPos: newID,
+        blank: blank,
+      ));
       newID++;
     }
   }
@@ -109,7 +107,8 @@ class jeuTaquin extends StatefulWidget {
 
 class jeuTaquinState extends State<jeuTaquin> {
   double taille = 5.0;
-  List<Widget> tiles = [];
+  int blankTile = 1;
+  List<TileWidget> tiles = [];
 
   jeuTaquinState() {
     tiles = generateCroppedTileList(taille.toInt());
@@ -117,6 +116,8 @@ class jeuTaquinState extends State<jeuTaquin> {
 
   @override
   Widget build(BuildContext context) {
+    tiles = shuffle(20, tiles);
+
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -149,6 +150,9 @@ class jeuTaquinState extends State<jeuTaquin> {
   }
 
   bool areNextTo(int tile1, int tile2, int taille) {
+    if (tile1 < 1 && tile1 > taille * taille - 1) {
+      return false;
+    }
     if (tile2 == tile1 + 1 && tile2 % taille != 0) {
       return true;
     } else if (tile2 == tile1 - 1 && tile1 % taille != 0) {
@@ -162,37 +166,44 @@ class jeuTaquinState extends State<jeuTaquin> {
     }
   }
 
-  swapTiles() {
+  List<TileWidget> swapTiles(int newTile, List<TileWidget> tiles) {
     setState(() {
-      tiles.insert(1, tiles.removeAt(0));
+      Tile temp = tiles[newTile].tile;
+      blankTile = newTile;
+      tiles[newTile].tile = tiles[blankTile].tile;
+      tiles[blankTile].tile = temp;
+      tiles[blankTile].isBlank = false;
+      tiles[newTile].isBlank = true;
     });
+    return tiles;
   }
 
-  void shuffle(int nbre) {
+  List<TileWidget> shuffle(int nbre, List<TileWidget> tiles) {
     for (int i = 0; i < nbre; i++) {
       int direction = random.nextInt(4);
-      int newIndex;
+      int newTile;
       switch (direction) {
         case 0:
-          newIndex = tiles[emptySlotIndex].index - 1;
+          newTile = tiles[blankTile].tileWidgetPos - 1;
           break;
         case 1:
-          newIndex = tiles[emptySlotIndex].index + 1;
+          newTile = tiles[blankTile].tileWidgetPos + 1;
           break;
         case 2:
-          newIndex = tiles[emptySlotIndex].index - size;
+          newTile = tiles[blankTile].tileWidgetPos - taille.toInt();
           break;
         case 3:
-          newIndex = tiles[emptySlotIndex].index + size;
+          newTile = tiles[blankTile].tileWidgetPos + taille.toInt();
           break;
         default:
-          newIndex = 0;
+          newTile = 0;
           break;
       }
-      print("going to index $newIndex");
-      if (checkRules(newIndex)) {
-        swapTiles(newIndex);
+
+      if (areNextTo(newTile, blankTile, taille.toInt())) {
+        tiles = swapTiles(newTile, tiles);
       }
     }
+    return tiles;
   }
 }

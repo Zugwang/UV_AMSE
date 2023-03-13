@@ -8,6 +8,7 @@ import 'exo5.dart' as exo5;
 import 'exo52.dart' as exo52;
 import 'exo6.dart' as exo6;
 import 'exo62.dart' as exo62;
+import 'exoTaquin.dart' as exotaquin;
 
 void main() => runApp(MyApp());
 
@@ -56,6 +57,10 @@ List exos = [
       title: 'Exercice 6.2',
       subtitle: 'Generate tiles',
       buildFunc: (context) => exo62.DisplayImageWidget()),
+  Exo(
+      title: 'Exercice Taquin',
+      subtitle: 'Generate tiles',
+      buildFunc: (context) => exotaquin.DisplayImageWidget()),
 ];
 
 class MenuPage extends StatelessWidget {
