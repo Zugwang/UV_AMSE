@@ -27,6 +27,10 @@ class Tile {
       required this.alignment});
 }
 
+// un de mes problèmes est la gestion de la case blanche
+// au final il y a 3 variables qui la stocke indépendement pour des problemes
+// de portée
+
 class TileWidget extends StatelessWidget {
   Tile tile;
   int tileWidgetPos = 0;
@@ -114,6 +118,9 @@ class jeuTaquinState extends State<jeuTaquin> {
     tiles = generateCroppedTileList(taille.toInt());
   }
 
+//fonction graphique
+// ne contient pas l'intégration du clic car les tests de swap ce sont montrés
+// plus difficile
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -148,6 +155,9 @@ class jeuTaquinState extends State<jeuTaquin> {
         ]);
   }
 
+  //vérifie les cases adjacentes ET leur validité
+  //des cases hors de la grille pouvant etre creer par shuffle
+
   bool areNextTo(int tile1, int tile2, int taille) {
     if (tile1 < 1 && tile1 > taille * taille - 1) {
       return false;
@@ -164,6 +174,12 @@ class jeuTaquinState extends State<jeuTaquin> {
       return false;
     }
   }
+
+  //ces fonctions ne devrait pa renvoyer de types
+  //pour debugger j'ai fait passer tiles en global et en l'enregistrant
+  //la présence d'erreur concernant le setState m'a poussé à faire ça
+  //j'ai analyser le code de nathan et de quentin pour savoir comment ils avait
+  //fait mais cela reviendrai à simplement copié leur code à ce stade
 
   List<TileWidget> swapTiles(int newTile, List<TileWidget> tiles) {
     setState(() {
@@ -182,6 +198,20 @@ class jeuTaquinState extends State<jeuTaquin> {
     return tiles;
   }
 
+  //condition de victoire
+
+  bool isWin(List<TileWidget> list, int taille) {
+    bool win = true;
+    for (int i = 0; i < taille * taille; i++) {
+      if (list[i].tileWidgetPos != list[i].tile.firstPos) {
+        win = false;
+      }
+    }
+    return win;
+  }
+
+// mélange avec un nombre de passes inferieur à nbre car les cases
+// de bordure peuvent générer des tirages non valide
   List<TileWidget> shuffle(int nbre, List<TileWidget> tiles) {
     for (int i = 0; i < nbre; i++) {
       int direction = random.nextInt(4);
