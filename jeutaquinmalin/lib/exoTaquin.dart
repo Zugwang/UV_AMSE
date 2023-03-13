@@ -16,7 +16,6 @@ class DisplayImageWidget extends StatelessWidget {
 
 class Tile {
   String image;
-  bool isBlank;
   int firstPos;
   int taille;
   Alignment alignment;
@@ -25,16 +24,21 @@ class Tile {
       {required this.firstPos,
       required this.image,
       required this.taille,
-      required this.alignment,
-      this.isBlank = false});
+      required this.alignment});
 }
 
 class TileWidget extends StatelessWidget {
   final Tile tile;
   int tileWidgetPos = 0;
+  bool isBlank = false;
 
-  TileWidget({required this.tile, required int tileWPos}) {
+  TileWidget({required this.tile, required int tileWPos, required bool blank}) {
     tileWidgetPos = tileWPos;
+    isBlank = blank;
+  }
+
+  void setBlank() {
+    isBlank = true;
   }
 
   @override
@@ -43,7 +47,7 @@ class TileWidget extends StatelessWidget {
   }
 
   Widget renderCroppedTile() {
-    if (tile.isBlank == false) {
+    if (isBlank == false) {
       return FittedBox(
         fit: BoxFit.fill,
         child: ClipRect(
@@ -59,7 +63,7 @@ class TileWidget extends StatelessWidget {
       );
     } else {
       return Container(
-          color: Colors.white,
+          color: Colors.red,
           child: const Padding(
             padding: EdgeInsets.all(70.0),
           ));
@@ -73,6 +77,10 @@ List<Widget> generateCroppedTileList(int taille) {
 
   for (var y = 1; y < taille + 1; y++) {
     for (var x = 1; x < taille + 1; x++) {
+      bool blank = false;
+      if (x == 1 && y == 1) {
+        blank = true;
+      }
       double Align_x = (((x - 1) * (2)) / (taille - 1)) - 1;
       double Align_y = (((y - 1) * (2)) / (taille - 1)) - 1;
       Tile newTile = Tile(
@@ -80,11 +88,14 @@ List<Widget> generateCroppedTileList(int taille) {
         taille: taille,
         image: 'poisson_bleu.jpg',
         firstPos: newID,
-        isBlank: false,
       );
       l.add(Padding(
           padding: EdgeInsets.all(0.4),
-          child: TileWidget(tile: newTile, tileWPos: newID)));
+          child: TileWidget(
+            tile: newTile,
+            tileWPos: newID,
+            blank: blank,
+          )));
       newID++;
     }
   }
@@ -135,5 +146,53 @@ class jeuTaquinState extends State<jeuTaquin> {
                 });
               })
         ]);
+  }
+
+  bool areNextTo(int tile1, int tile2, int taille) {
+    if (tile2 == tile1 + 1 && tile2 % taille != 0) {
+      return true;
+    } else if (tile2 == tile1 - 1 && tile1 % taille != 0) {
+      return true;
+    } else if (tile2 == tile1 + taille && tile2 > taille - 1) {
+      return true;
+    } else if (tile2 == tile1 - taille && tile1 > taille - 1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  swapTiles() {
+    setState(() {
+      tiles.insert(1, tiles.removeAt(0));
+    });
+  }
+
+  void shuffle(int nbre) {
+    for (int i = 0; i < nbre; i++) {
+      int direction = random.nextInt(4);
+      int newIndex;
+      switch (direction) {
+        case 0:
+          newIndex = tiles[emptySlotIndex].index - 1;
+          break;
+        case 1:
+          newIndex = tiles[emptySlotIndex].index + 1;
+          break;
+        case 2:
+          newIndex = tiles[emptySlotIndex].index - size;
+          break;
+        case 3:
+          newIndex = tiles[emptySlotIndex].index + size;
+          break;
+        default:
+          newIndex = 0;
+          break;
+      }
+      print("going to index $newIndex");
+      if (checkRules(newIndex)) {
+        swapTiles(newIndex);
+      }
+    }
   }
 }
