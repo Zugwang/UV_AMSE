@@ -116,6 +116,7 @@ void shuffleTile(List<Widget> l, int taille, int vide) {
 
 List<Widget> genRandCroppedTileList(int taille, int coup, List<Widget> l) {
   for (var y = 0; y < coup + 1; y++) {}
+  return l;
 }
 
 class PositionedTiles extends StatefulWidget {
