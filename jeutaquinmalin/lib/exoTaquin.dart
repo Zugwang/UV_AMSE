@@ -28,7 +28,7 @@ class Tile {
 }
 
 class TileWidget extends StatelessWidget {
-  late final Tile tile;
+  Tile tile;
   int tileWidgetPos = 0;
   bool isBlank = false;
 
@@ -73,7 +73,7 @@ class TileWidget extends StatelessWidget {
 
 List<TileWidget> generateCroppedTileList(int taille) {
   List<TileWidget> l = [];
-  int newID = 1;
+  int newID = 0;
 
   for (var y = 1; y < taille + 1; y++) {
     for (var x = 1; x < taille + 1; x++) {
@@ -116,8 +116,6 @@ class jeuTaquinState extends State<jeuTaquin> {
 
   @override
   Widget build(BuildContext context) {
-    tiles = shuffle(20, tiles);
-
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -144,6 +142,7 @@ class jeuTaquinState extends State<jeuTaquin> {
                 setState(() {
                   taille = t;
                   tiles = generateCroppedTileList(taille.toInt());
+                  tiles = shuffle(3, tiles);
                 });
               })
         ]);
@@ -168,12 +167,17 @@ class jeuTaquinState extends State<jeuTaquin> {
 
   List<TileWidget> swapTiles(int newTile, List<TileWidget> tiles) {
     setState(() {
-      Tile temp = tiles[newTile].tile;
+      print(blankTile);
+      TileWidget temp = tiles[newTile];
+      int tempPos = tiles[newTile].tileWidgetPos;
       blankTile = newTile;
-      tiles[newTile].tile = tiles[blankTile].tile;
-      tiles[blankTile].tile = temp;
-      tiles[blankTile].isBlank = false;
-      tiles[newTile].isBlank = true;
+      print(blankTile);
+      print(tempPos);
+      print(temp);
+
+      tiles[newTile] = tiles[blankTile];
+      tiles[newTile].tileWidgetPos = tiles[blankTile].tileWidgetPos;
+      tiles[blankTile].tileWidgetPos = tempPos;
     });
     return tiles;
   }
