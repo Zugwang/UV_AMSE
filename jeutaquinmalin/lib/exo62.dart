@@ -5,21 +5,22 @@ math.Random random = new math.Random();
 
 class Tile {
   Color color = const Color.fromARGB(255, 32, 206, 75);
-
+  String name = "";
+  bool isEmpty = false;
   Tile(this.color);
 
   Tile.randomColor() {
     this.color = Color.fromARGB(
-        255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
+        128, random.nextInt(128), random.nextInt(128), random.nextInt(128));
   }
 }
 
 class TileWidget extends StatelessWidget {
   final Tile tile;
-  int tileID = 0;
+  int tileCurrentPos = 0;
 
-  TileWidget({required this.tile, int tilePos = 0}) {
-    tileID = tilePos;
+  TileWidget({required this.tile, required int tilePos}) {
+    tileCurrentPos = tilePos;
   }
 
   @override
@@ -31,7 +32,7 @@ class TileWidget extends StatelessWidget {
     return Container(
         color: tile.color,
         padding: EdgeInsets.all(70.0),
-        child: Text(this.tileID.toString()));
+        child: Text(tile.name));
   }
 }
 
@@ -42,15 +43,14 @@ class DisplayImageWidget extends StatelessWidget {
         appBar: AppBar(
           title: Text('Generation de Tile'),
         ),
-        body: Center(
-          child: PositionedTiles(),
-        ));
+        body: PositionedTiles());
   }
 }
 
 List<Widget> generateCroppedTileList(int taille) {
   List<Widget> l = [];
-  int newID = 12;
+  int newID = 1;
+  int caseVide = 0;
 
   for (var y = 1; y < taille + 1; y++) {
     for (var x = 1; x < taille + 1; x++) {
@@ -63,6 +63,59 @@ List<Widget> generateCroppedTileList(int taille) {
   }
 
   return l;
+}
+
+bool areNextTo(int tile1, int tile2, int taille) {
+  if (tile2 == tile1 + 1 && tile2 % taille != 0) {
+    return true;
+  } else if (tile2 == tile1 - 1 && tile1 % taille != 0) {
+    return true;
+  } else if (tile2 == tile1 + taille && tile2 > taille - 1) {
+    return true;
+  } else if (tile2 == tile1 - taille && tile1 > taille - 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void shuffleTile(List<Widget> l, int taille, int vide) {
+  int tirage = math.Random().nextInt(taille - 1);
+  int cote = math.Random().nextInt(4);
+
+  if (cote == 0) {
+    tirage += 1;
+  }
+  if (cote == 1) {
+    tirage -= 1;
+  }
+  if (cote == 2) {
+    tirage += taille;
+  }
+  if (cote == 3) {
+    tirage -= taille;
+  }
+
+  while (!areNextTo(tirage, vide, taille)) {
+    cote = math.Random().nextInt(4);
+
+    if (cote == 0) {
+      tirage += 1;
+    }
+    if (cote == 1) {
+      tirage -= 1;
+    }
+    if (cote == 2) {
+      tirage += taille;
+    }
+    if (cote == 3) {
+      tirage -= taille;
+    }
+  }
+}
+
+List<Widget> genRandCroppedTileList(int taille, int coup, List<Widget> l) {
+  for (var y = 0; y < coup + 1; y++) {}
 }
 
 class PositionedTiles extends StatefulWidget {
